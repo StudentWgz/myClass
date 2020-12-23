@@ -1,0 +1,242 @@
+// Thelasttest.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include<iostream.h>
+#include <stdlib.h>
+class Rational
+{
+public:
+	Rational(int num,int de);													//构造函数，输入分子分母
+    friend Rational operator+(Rational r1, Rational r2);						//重载加法运算符，参数为类的引用
+    friend Rational operator-(Rational r1, Rational r2);						//重载减法
+    friend Rational operator*(Rational r1, Rational r2);						//重载乘法
+    friend Rational operator/(Rational r1, Rational r2);						//重载除法函数
+	friend bool operator == (Rational &r1,Rational &r2);						//重载 == 符号
+	friend ostream &operator << ( ostream &cout, const Rational &r );			//重载输出函数	
+	friend istream &operator >> ( istream &cin, Rational &r );					//重载输入函数
+	friend void disableReal(Rational &r);										//有理数化为实数的函数
+	Rational youhua1();															//又返回指的约分
+	void youhua();//无返回值的约分
+	void choose();
+private:								
+	int denominator;							   //定义分子
+	int numerator;								   //定义分母								
+};
+
+
+Rational::Rational(int num,int de)												//构造函数赋值操作
+{	if(denominator!=0)
+	denominator=de;
+	else
+	denominator=1;
+	numerator=num;
+}
+void Rational::youhua()												//求出分子和分母的最大公约数，算法来源网络
+{
+
+															
+    int a = abs(numerator);
+    int b = abs(denominator);
+    while (b > 0)
+    {
+        int t = a % b;
+        a = b;
+        b = t;
+    }
+    numerator /= a;
+    denominator /= a;
+}
+Rational Rational::youhua1()										//求出分子和分母的最大公约数，算法来源网络
+{															
+    int a = abs(numerator);
+    int b = abs(denominator);
+    while (b > 0)
+    {
+        int t = a % b;
+        a = b;
+        b = t;
+    }
+    Rational R(numerator / a, denominator / a);
+    return R;
+}
+void disableReal(Rational &r)												//转化为实数输出
+{
+	double realnum=(double)r.numerator/(double)r.denominator;
+	cout<<realnum<<endl;
+}
+Rational operator+(Rational r1, Rational r2)								//重载加法运算符，分数的加法
+{
+	int a = r1.numerator;
+    int b = r1.denominator;
+    int c = r2.numerator;
+    int d = r2.denominator;
+    int e = a * d + b * c;
+    int f = b * d;
+    Rational R(e, f);
+    return R;
+}
+
+Rational operator-(Rational r1, Rational r2)								//重载减法运算符,函数结构和加法一致，返回加法运算
+{
+    int a = r1.numerator;
+    int b = r1.denominator;
+    int c = r2.numerator;
+    int d = r2.denominator;
+    int e = a * d - b * c;
+    int f = b * d;
+    Rational R(e, f);
+    return R;
+}
+
+Rational operator*(Rational r1, Rational r2)								//重载乘法运算符
+{
+    int a = r1.numerator;
+    int b = r1.denominator;
+    int c = r2.numerator;
+    int d = r2.denominator;
+    int e = a * c;
+    int f = b * d;
+    Rational R(e, f);
+    return R;
+}
+
+Rational operator/(Rational r1, Rational r2)								//重载除法运算符
+{
+    int a = r1.numerator;
+    int b = r1.denominator;
+    int c = r2.numerator;
+    int d = r2.denominator;
+    int e = a / c;
+    int f = b * d;
+    Rational R(e, f);
+    return R;
+}
+bool operator == (Rational &r1,Rational &r2)
+{
+	r1=r1.youhua1();
+	r2=r2.youhua1();
+	if((r1.denominator == r2.denominator) && (r1.numerator == r2.numerator))
+        return true;													
+    else
+        return false;
+}
+ostream &operator << ( ostream &cout, const Rational &r )
+{
+	if (r.numerator%r.denominator == 0)									//进行判断，当为一个整数时，改变输出
+        cout << r.numerator / r.denominator;
+    else
+        cout << r.numerator << "/"<<r.denominator;
+        return cout;
+}
+istream &operator >> ( istream &cin, Rational &r )
+{
+	cin >> r.numerator;
+	if(cin.fail())
+    {
+        cout << "输入有误";
+        exit(0);
+    }
+	cin>> r.denominator;									//避免除0错误，进行判断，分母为0时程序结束
+    if (r.denominator != 0)
+        return cin;
+	else 
+		r.choose();
+    if(cin.fail())
+    {
+        cout << "输入有误";
+        
+    }
+}
+void Rational::choose()
+{
+	int n;
+	char q;
+	Rational a1(1,1);
+	Rational a2(2,2);
+	Rational a3(3,3);
+	cout<<"第一个数"<<endl;
+	cin>>a1;
+	cout<<"第二个数"<<endl;
+	cin>>a2;
+	do														  //实现多次的运算，用do-whlie循环
+    {
+		cout<<"*************欢迎使用有理数计算器，请选择功能******************"<<endl;
+        cout<<" --------------------1.重新输入分子和分母----------------------"<<endl;
+        cout<<" --------------------2.有理数加法运算--------------------------"<<endl;
+        cout<<" --------------------3.有理数减法运算--------------------------"<<endl;
+        cout<<" --------------------4.有理数乘法运算--------------------------"<<endl;
+        cout<<" --------------------5.有理数除法运算--------------------------"<<endl;
+        cout<<" --------------------6.判断有理数相等--------------------------"<<endl;
+        cout<<" --------------------7.对有理数优化化简------------------------"<<endl;
+        cout<<" --------------------8.有理数变成实数--------------------------"<<endl;
+        cout<<" --------------------9.结束程序--------------------------------"<<endl;
+        cout<<"---------------------您的选择是:";
+        cin>>n;
+		switch(n)
+		{
+		case 1:
+			cout<<"第一个数"<<endl;
+			cin>>a1;
+			cout<<"第二个数"<<endl;
+			cin>>a2;
+			break;
+		case 2:
+			a3=a1+a2;
+			a3.youhua();
+            cout <<"a1+a2="<< a3 << endl;
+            break;
+        case 3:
+            a3=a1-a2;
+			a3.youhua();
+            cout << "a1-a2= "<<a3 << endl;
+            break;
+        case 4:
+            a3 =a1*a2;
+			a3.youhua();
+            cout <<"a1*a2="<< a3 << endl;
+            break;
+        case 5:
+            a3 =a1/a2;
+			a3.youhua();
+            cout << "a1/a2="<<a3 << endl;
+            break;
+        case 6:
+            if(a1==a2)   //调用判断相等函数
+				cout<<"相等";
+				else
+				cout<<"不相等";
+            break;
+        case 7:
+            a1=a1.youhua1();
+            a2=a2.youhua1();
+			cout<<a1<<endl;
+			cout<<a2<<endl;
+            break;
+        case 8:
+            cout<<"a1= ";
+            disableReal(a1);											//输出实数
+            cout <<"a2 = ";
+            disableReal(a2);
+            break;
+		case 9:
+			break;
+		}
+	
+		cout<<"\n要继续选择吗(Y/N)？"<<endl;
+        do 
+		{
+            cin >> q;
+		}
+		while(q!='Y'&&q!='y'&&q!='N'&&q!='n');//是程序实现多次运行，进行判断是否继续进行操作
+
+		}
+	while (q=='Y'||q =='y');												   //程序结束
+}
+int main()
+{
+	cout<<"请依次输入分子与分母"<<endl;
+	Rational a4(4,4);
+	a4.choose();
+	return 0;
+}
